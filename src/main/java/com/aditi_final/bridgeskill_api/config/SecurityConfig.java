@@ -80,7 +80,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/student-profile/**").hasRole("STUDENT")
 
                         // client endpoints
-                        .requestMatchers("/api/client/**").hasRole("CLIENT")
+                        .requestMatchers("/api/client-profile/**").hasRole("CLIENT")
 
                         // job management
                         .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
