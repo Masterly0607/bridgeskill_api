@@ -77,7 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // student endpoints
-                        .requestMatchers("/api/student/**").hasRole("STUDENT")
+                        .requestMatchers("/api/student-profile/**").hasRole("STUDENT")
 
                         // client endpoints
                         .requestMatchers("/api/client/**").hasRole("CLIENT")

@@ -30,7 +30,7 @@ public class StudentProfile {
     @Column(length = 20)
     private String phone;
 
-    @Column(length = 100)
+    @Column(length = 150)
     private String university;
 
     @Column(name = "created_at", insertable = false, updatable = false)
