@@ -83,6 +83,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/client/**").hasRole("CLIENT")
 
                         // job management
+                        .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/jobs").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.PUT, "/api/jobs/*").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.DELETE, "/api/jobs/*").hasRole("CLIENT")

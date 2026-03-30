@@ -31,13 +31,13 @@ public class Job {
     @Column(length = 100)
     private String category;
 
-    @Column(length = 100)
+    @Column(length = 150)
     private String location;
 
     @Column(precision = 12, scale = 2)
     private BigDecimal salary;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 20)
     private String status;
 
     @Column(name = "created_at", insertable = false, updatable = false)
