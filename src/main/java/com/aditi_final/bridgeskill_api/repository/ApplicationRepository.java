@@ -7,8 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-    List<Application> findByStudentId(Long studentId);
-    List<Application> findByJobId(Long jobId);
+
     boolean existsByJobIdAndStudentId(Long jobId, Long studentId);
-    Optional<Application> findByJobIdAndStudentId(Long jobId, Long studentId);
+
+    List<Application> findByStudentIdOrderByCreatedAtDesc(Long studentId);
+
+    Optional<Application> findByIdAndStudentId(Long id, Long studentId);
+
+    List<Application> findByJobIdOrderByCreatedAtDesc(Long jobId);
 }
