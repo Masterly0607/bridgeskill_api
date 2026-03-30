@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long> {
     List<Job> findByClientId(Long clientId);
+    List<Job> findTop5ByOrderByCreatedAtDesc();
 }

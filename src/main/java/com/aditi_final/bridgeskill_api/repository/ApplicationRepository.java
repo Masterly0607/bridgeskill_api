@@ -15,4 +15,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     Optional<Application> findByIdAndStudentId(Long id, Long studentId);
 
     List<Application> findByJobIdOrderByCreatedAtDesc(Long jobId);
+    long countByStatus(String status);
+
+    List<Application> findTop5ByOrderByCreatedAtDesc();
 }
