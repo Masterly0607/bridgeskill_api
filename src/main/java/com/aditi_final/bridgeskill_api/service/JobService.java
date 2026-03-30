@@ -12,6 +12,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -25,9 +26,24 @@ public class JobService {
         this.userRepository = userRepository;
     }
 
-    public List<JobResponse> getAllJobs() {
+    public List<JobResponse> getAllJobs(String keyword, String category, String status) {
+        String normalizedKeyword = normalize(keyword);
+        String normalizedCategory = normalize(category);
+        String normalizedStatus = normalize(status);
+
         return jobRepository.findAll()
                 .stream()
+                .filter(job -> normalizedKeyword == null
+                        || (job.getTitle() != null
+                        && job.getTitle().toLowerCase().contains(normalizedKeyword.toLowerCase())))
+                .filter(job -> normalizedCategory == null
+                        || (job.getCategory() != null
+                        && job.getCategory().equalsIgnoreCase(normalizedCategory)))
+                .filter(job -> normalizedStatus == null
+                        || (job.getStatus() != null
+                        && job.getStatus().equalsIgnoreCase(normalizedStatus)))
+                .sorted(Comparator.comparing(Job::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -95,6 +111,13 @@ public class JobService {
         }
 
         jobRepository.delete(job);
+    }
+
+    private String normalize(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        return value.trim();
     }
 
     private JobResponse mapToResponse(Job job) {
