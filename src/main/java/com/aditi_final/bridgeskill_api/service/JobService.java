@@ -5,12 +5,11 @@ import com.aditi_final.bridgeskill_api.dto.job.JobResponse;
 import com.aditi_final.bridgeskill_api.dto.job.UpdateJobRequest;
 import com.aditi_final.bridgeskill_api.entity.Job;
 import com.aditi_final.bridgeskill_api.entity.User;
+import com.aditi_final.bridgeskill_api.exception.ForbiddenActionException;
+import com.aditi_final.bridgeskill_api.exception.ResourceNotFoundException;
 import com.aditi_final.bridgeskill_api.repository.JobRepository;
 import com.aditi_final.bridgeskill_api.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -50,14 +49,14 @@ public class JobService {
 
     public JobResponse getJobById(Long id) {
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         return mapToResponse(job);
     }
 
     public JobResponse createJob(CreateJobRequest request, String email) {
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Job job = Job.builder()
                 .clientId(currentUser.getId())
@@ -75,17 +74,17 @@ public class JobService {
 
     public JobResponse updateJob(Long id, UpdateJobRequest request, String email) {
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         if (!job.getClientId().equals(currentUser.getId())) {
-            throw new AccessDeniedException("You can only update your own jobs");
+            throw new ForbiddenActionException("You can only update your own jobs");
         }
 
         if (!request.getStatus().equals("OPEN") && !request.getStatus().equals("CLOSED")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid job status");
+            throw new IllegalArgumentException("Invalid job status");
         }
 
         job.setTitle(request.getTitle());
@@ -101,13 +100,13 @@ public class JobService {
 
     public void deleteJob(Long id, String email) {
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         if (!job.getClientId().equals(currentUser.getId())) {
-            throw new AccessDeniedException("You can only delete your own jobs");
+            throw new ForbiddenActionException("You can only delete your own jobs");
         }
 
         jobRepository.delete(job);

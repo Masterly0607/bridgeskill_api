@@ -57,6 +57,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
@@ -83,7 +84,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/client-profile/**").hasRole("CLIENT")
 
                         // job management
-                        .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/jobs").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.PUT, "/api/jobs/*").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.DELETE, "/api/jobs/*").hasRole("CLIENT")
@@ -91,9 +91,7 @@ public class SecurityConfig {
                         // applications
                         .requestMatchers(HttpMethod.POST, "/api/applications/jobs/*").hasRole("STUDENT")
                         .requestMatchers("/api/applications/me/**").hasRole("STUDENT")
-
                         .requestMatchers("/api/applications/client/**").hasRole("CLIENT")
-
                         .requestMatchers("/api/applications/admin/**").hasRole("ADMIN")
 
                         // everything else must be authenticated
@@ -105,17 +103,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-// Main goal of this file
-//Main goal of file 2
-//
-//This file tells Spring Security:
-//
-//which routes are public
-//which routes need login
-//which role can access which endpoint
-//what to do for 401 and 403
-//use JWT instead of session login
-//
-//So this file answers:
-//
-//        “Which role can enter which API?”

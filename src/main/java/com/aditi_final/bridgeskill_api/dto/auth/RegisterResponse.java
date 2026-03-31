@@ -1,4 +1,4 @@
-package com.aditi_final.bridgeskill_api.dto;
+package com.aditi_final.bridgeskill_api.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

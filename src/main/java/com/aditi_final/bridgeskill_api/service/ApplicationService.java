@@ -6,6 +6,9 @@ import com.aditi_final.bridgeskill_api.dto.application.UpdateApplicationStatusRe
 import com.aditi_final.bridgeskill_api.entity.Application;
 import com.aditi_final.bridgeskill_api.entity.Job;
 import com.aditi_final.bridgeskill_api.entity.User;
+import com.aditi_final.bridgeskill_api.exception.DuplicateResourceException;
+import com.aditi_final.bridgeskill_api.exception.ForbiddenActionException;
+import com.aditi_final.bridgeskill_api.exception.ResourceNotFoundException;
 import com.aditi_final.bridgeskill_api.repository.ApplicationRepository;
 import com.aditi_final.bridgeskill_api.repository.JobRepository;
 import com.aditi_final.bridgeskill_api.repository.UserRepository;
@@ -28,10 +31,10 @@ public class ApplicationService {
         User currentUser = getCurrentUser();
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new IllegalArgumentException("Job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         if (applicationRepository.existsByJobIdAndStudentId(jobId, currentUser.getId())) {
-            throw new IllegalArgumentException("You have already applied for this job");
+            throw new DuplicateResourceException("You have already applied for this job");
         }
 
         Application application = Application.builder()
@@ -59,7 +62,7 @@ public class ApplicationService {
         User currentUser = getCurrentUser();
 
         Application application = applicationRepository.findByIdAndStudentId(id, currentUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         return mapToResponse(application);
     }
@@ -68,10 +71,10 @@ public class ApplicationService {
         User currentUser = getCurrentUser();
 
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new IllegalArgumentException("Job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         if (!job.getClientId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You are not allowed to view applications for this job");
+            throw new ForbiddenActionException("You are not allowed to view applications for this job");
         }
 
         return applicationRepository.findByJobIdOrderByCreatedAtDesc(jobId)
@@ -84,13 +87,13 @@ public class ApplicationService {
         User currentUser = getCurrentUser();
 
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         Job job = jobRepository.findById(application.getJobId())
-                .orElseThrow(() -> new IllegalArgumentException("Job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         if (!job.getClientId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You are not allowed to view this application");
+            throw new ForbiddenActionException("You are not allowed to view this application");
         }
 
         return mapToResponse(application);
@@ -100,18 +103,18 @@ public class ApplicationService {
         User currentUser = getCurrentUser();
 
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         Job job = jobRepository.findById(application.getJobId())
-                .orElseThrow(() -> new IllegalArgumentException("Job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
         if (!job.getClientId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You are not allowed to update this application");
+            throw new ForbiddenActionException("You are not allowed to update this application");
         }
 
         String status = request.getStatus().trim().toUpperCase();
 
-        if (!List.of("PENDING", "REVIEWED", "SHORTLISTED", "REJECTED", "ACCEPTED").contains(status)) {
+        if (!List.of("PENDING", "REVIEWED", "SHORTLISTED", "REJECTED").contains(status)) {
             throw new IllegalArgumentException("Invalid application status");
         }
 
@@ -145,6 +148,6 @@ public class ApplicationService {
         String email = authentication.getName();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

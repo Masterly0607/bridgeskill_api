@@ -5,6 +5,8 @@ import com.aditi_final.bridgeskill_api.dto.student_profile.StudentProfileRespons
 import com.aditi_final.bridgeskill_api.dto.student_profile.UpdateStudentProfileRequest;
 import com.aditi_final.bridgeskill_api.entity.StudentProfile;
 import com.aditi_final.bridgeskill_api.entity.User;
+import com.aditi_final.bridgeskill_api.exception.DuplicateResourceException;
+import com.aditi_final.bridgeskill_api.exception.ResourceNotFoundException;
 import com.aditi_final.bridgeskill_api.repository.StudentProfileRepository;
 import com.aditi_final.bridgeskill_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class StudentProfileService {
         User currentUser = getCurrentUser();
 
         if (studentProfileRepository.existsByUserId(currentUser.getId())) {
-            throw new IllegalArgumentException("Student profile already exists");
+            throw new DuplicateResourceException("Student profile already exists");
         }
 
         StudentProfile profile = StudentProfile.builder()
@@ -43,7 +45,7 @@ public class StudentProfileService {
         User currentUser = getCurrentUser();
 
         StudentProfile profile = studentProfileRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Student profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student profile not found"));
 
         return mapToResponse(profile);
     }
@@ -52,7 +54,7 @@ public class StudentProfileService {
         User currentUser = getCurrentUser();
 
         StudentProfile profile = studentProfileRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Student profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student profile not found"));
 
         profile.setBio(request.getBio());
         profile.setSkills(request.getSkills());
@@ -69,7 +71,7 @@ public class StudentProfileService {
         String email = authentication.getName();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     private StudentProfileResponse mapToResponse(StudentProfile profile) {

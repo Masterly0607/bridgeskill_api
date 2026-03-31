@@ -13,6 +13,7 @@ public class CreateClientProfileRequest {
     @Size(max = 150, message = "Company name must not exceed 150 characters")
     private String companyName;
 
+    @Size(max = 1000, message = "Company description must not exceed 1000 characters")
     private String companyDescription;
 
     @Size(max = 20, message = "Phone must not exceed 20 characters")

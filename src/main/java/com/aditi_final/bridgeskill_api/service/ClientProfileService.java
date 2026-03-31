@@ -5,6 +5,8 @@ import com.aditi_final.bridgeskill_api.dto.client_profile.CreateClientProfileReq
 import com.aditi_final.bridgeskill_api.dto.client_profile.UpdateClientProfileRequest;
 import com.aditi_final.bridgeskill_api.entity.ClientProfile;
 import com.aditi_final.bridgeskill_api.entity.User;
+import com.aditi_final.bridgeskill_api.exception.DuplicateResourceException;
+import com.aditi_final.bridgeskill_api.exception.ResourceNotFoundException;
 import com.aditi_final.bridgeskill_api.repository.ClientProfileRepository;
 import com.aditi_final.bridgeskill_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class ClientProfileService {
         User currentUser = getCurrentUser();
 
         if (clientProfileRepository.existsByUserId(currentUser.getId())) {
-            throw new IllegalArgumentException("Client profile already exists");
+            throw new DuplicateResourceException("Client profile already exists");
         }
 
         ClientProfile clientProfile = ClientProfile.builder()
@@ -41,7 +43,7 @@ public class ClientProfileService {
         User currentUser = getCurrentUser();
 
         ClientProfile clientProfile = clientProfileRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Client profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client profile not found"));
 
         return mapToResponse(clientProfile);
     }
@@ -50,7 +52,7 @@ public class ClientProfileService {
         User currentUser = getCurrentUser();
 
         ClientProfile clientProfile = clientProfileRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Client profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client profile not found"));
 
         clientProfile.setCompanyName(request.getCompanyName());
         clientProfile.setCompanyDescription(request.getCompanyDescription());
@@ -65,7 +67,7 @@ public class ClientProfileService {
         String email = authentication.getName();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     private ClientProfileResponse mapToResponse(ClientProfile clientProfile) {

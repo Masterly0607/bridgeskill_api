@@ -34,3 +34,18 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.getWriter().write(objectMapper.writeValueAsString(body));
     }
 }
+
+//Main job: handle authenticated but not allowed requests.
+//
+//This means:
+//
+//token is valid
+//user is logged in
+//but role/permission is not enough
+//
+//Usually returns:
+//
+//        403 Forbidden
+
+// Note: security handlers
+//Handle errors that happen inside Spring Security filter chain, often before request reaches controller.

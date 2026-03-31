@@ -34,3 +34,4 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.getWriter().write(objectMapper.writeValueAsString(body));
     }
 }
+// Main job(Spring Security errors specifically): handle unauthenticated requests. This means: no token, invalid token, expired token, user tries protected API without login, Usually returns: 401 Unauthorized

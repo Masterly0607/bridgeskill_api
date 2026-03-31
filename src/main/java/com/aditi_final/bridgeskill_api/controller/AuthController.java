@@ -1,6 +1,6 @@
 package com.aditi_final.bridgeskill_api.controller;
 
-import com.aditi_final.bridgeskill_api.dto.*;
+import com.aditi_final.bridgeskill_api.dto.auth.*;
 import com.aditi_final.bridgeskill_api.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
