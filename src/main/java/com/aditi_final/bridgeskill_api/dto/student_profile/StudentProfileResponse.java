@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class StudentProfileResponse {
     private Long id;
     private Long userId;
+    private String fullName;
+    private String email;
     private String bio;
     private String skills;
     private String phone;

@@ -67,34 +67,30 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // public auth endpoints
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // public job browsing
                         .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
 
-                        // admin endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // student endpoints
+                        // client can view applicant student profile through application
+                        .requestMatchers(HttpMethod.GET, "/api/student-profile/client/applications/*").hasRole("CLIENT")
+
+                        // normal student profile endpoints
                         .requestMatchers("/api/student-profile/**").hasRole("STUDENT")
 
-                        // client endpoints
                         .requestMatchers("/api/client-profile/**").hasRole("CLIENT")
 
-                        // job management
                         .requestMatchers(HttpMethod.POST, "/api/jobs").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.PUT, "/api/jobs/*").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.DELETE, "/api/jobs/*").hasRole("CLIENT")
 
-                        // applications
                         .requestMatchers(HttpMethod.POST, "/api/applications/jobs/*").hasRole("STUDENT")
                         .requestMatchers("/api/applications/me/**").hasRole("STUDENT")
                         .requestMatchers("/api/applications/client/**").hasRole("CLIENT")
                         .requestMatchers("/api/applications/admin/**").hasRole("ADMIN")
 
-                        // everything else must be authenticated
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

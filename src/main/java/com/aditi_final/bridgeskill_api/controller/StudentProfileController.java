@@ -36,4 +36,11 @@ public class StudentProfileController {
     ) {
         return ResponseEntity.ok(studentProfileService.updateProfile(request));
     }
+
+    @GetMapping("/client/applications/{applicationId}")
+    public ResponseEntity<StudentProfileResponse> getStudentProfileForClient(
+            @PathVariable Long applicationId
+    ) {
+        return ResponseEntity.ok(studentProfileService.getStudentProfileForClient(applicationId));
+    }
 }
