@@ -11,9 +11,10 @@ public class ApplicationResponse {
 
     private Long id;
     private Long jobId;
+    private String jobTitle;
     private Long studentId;
     private String coverLetter;
     private String status;
-    private LocalDateTime createdAt;
+    private LocalDateTime appliedAt;
     private LocalDateTime updatedAt;
 }

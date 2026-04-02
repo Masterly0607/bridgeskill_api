@@ -2,7 +2,6 @@ package com.aditi_final.bridgeskill_api.security;
 
 import com.aditi_final.bridgeskill_api.entity.User;
 import com.aditi_final.bridgeskill_api.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,11 @@ import java.util.List;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -29,8 +31,3 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
     }
 }
-// Main goal of this file
-// This file tells Spring Security:
-// find user by email
-// read the user’s role
-// convert that role into Spring authority

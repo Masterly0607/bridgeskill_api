@@ -72,12 +72,22 @@ public class AdminMonitoringService {
         Job job = jobRepository.findById(application.getJobId()).orElse(null);
         User student = userRepository.findById(application.getStudentId()).orElse(null);
 
+        String jobTitle = "Deleted Job";
+        if (job != null && job.getTitle() != null && !job.getTitle().trim().isEmpty()) {
+            jobTitle = job.getTitle();
+        }
+
+        String studentName = "Unknown Student";
+        if (student != null && student.getFullName() != null && !student.getFullName().trim().isEmpty()) {
+            studentName = student.getFullName();
+        }
+
         return RecentApplicationResponse.builder()
                 .id(application.getId())
                 .jobId(application.getJobId())
-                .jobTitle(job != null ? job.getTitle() : null)
+                .jobTitle(jobTitle)
                 .studentId(application.getStudentId())
-                .studentName(student != null ? student.getFullName() : null)
+                .studentName(studentName)
                 .status(application.getStatus())
                 .appliedAt(application.getCreatedAt())
                 .build();
@@ -86,11 +96,18 @@ public class AdminMonitoringService {
     private RecentJobResponse mapRecentJob(Job job) {
         ClientProfile clientProfile = clientProfileRepository.findByUserId(job.getClientId()).orElse(null);
 
+        String companyName = "Unknown Company";
+        if (clientProfile != null
+                && clientProfile.getCompanyName() != null
+                && !clientProfile.getCompanyName().trim().isEmpty()) {
+            companyName = clientProfile.getCompanyName();
+        }
+
         return RecentJobResponse.builder()
                 .id(job.getId())
                 .title(job.getTitle())
                 .clientId(job.getClientId())
-                .companyName(clientProfile != null ? clientProfile.getCompanyName() : null)
+                .companyName(companyName)
                 .createdAt(job.getCreatedAt())
                 .build();
     }

@@ -7,6 +7,7 @@ import com.aditi_final.bridgeskill_api.entity.Job;
 import com.aditi_final.bridgeskill_api.entity.User;
 import com.aditi_final.bridgeskill_api.exception.ForbiddenActionException;
 import com.aditi_final.bridgeskill_api.exception.ResourceNotFoundException;
+import com.aditi_final.bridgeskill_api.repository.ApplicationRepository;
 import com.aditi_final.bridgeskill_api.repository.JobRepository;
 import com.aditi_final.bridgeskill_api.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,16 @@ public class JobService {
 
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
+    private final ApplicationRepository applicationRepository;
 
-    public JobService(JobRepository jobRepository, UserRepository userRepository) {
+    public JobService(
+            JobRepository jobRepository,
+            UserRepository userRepository,
+            ApplicationRepository applicationRepository
+    ) {
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
+        this.applicationRepository = applicationRepository;
     }
 
     public List<JobResponse> getAllJobs(String keyword, String category, String status) {
@@ -109,7 +116,16 @@ public class JobService {
             throw new ForbiddenActionException("You can only delete your own jobs");
         }
 
-        jobRepository.delete(job);
+        boolean hasApplications = applicationRepository.existsByJobId(id);
+
+        if (hasApplications) {
+            job.setStatus("CLOSED");
+            jobRepository.save(job);
+            return;
+        }
+
+        job.setStatus("CLOSED");
+        jobRepository.save(job);
     }
 
     private String normalize(String value) {

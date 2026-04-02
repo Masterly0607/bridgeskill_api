@@ -132,13 +132,18 @@ public class ApplicationService {
     }
 
     private ApplicationResponse mapToResponse(Application application) {
+        String jobTitle = jobRepository.findById(application.getJobId())
+                .map(Job::getTitle)
+                .orElse("Deleted Job");
+
         return ApplicationResponse.builder()
                 .id(application.getId())
                 .jobId(application.getJobId())
+                .jobTitle(jobTitle)
                 .studentId(application.getStudentId())
                 .coverLetter(application.getCoverLetter())
                 .status(application.getStatus())
-                .createdAt(application.getCreatedAt())
+                .appliedAt(application.getCreatedAt())
                 .updatedAt(application.getUpdatedAt())
                 .build();
     }

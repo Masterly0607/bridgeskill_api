@@ -1,12 +1,15 @@
 package com.aditi_final.bridgeskill_api.service;
 
-import com.aditi_final.bridgeskill_api.dto.auth.*;
+import com.aditi_final.bridgeskill_api.dto.auth.LoginRequest;
+import com.aditi_final.bridgeskill_api.dto.auth.LoginResponse;
+import com.aditi_final.bridgeskill_api.dto.auth.MeResponse;
+import com.aditi_final.bridgeskill_api.dto.auth.RegisterRequest;
+import com.aditi_final.bridgeskill_api.dto.auth.RegisterResponse;
 import com.aditi_final.bridgeskill_api.entity.User;
 import com.aditi_final.bridgeskill_api.exception.DuplicateResourceException;
 import com.aditi_final.bridgeskill_api.exception.ResourceNotFoundException;
 import com.aditi_final.bridgeskill_api.repository.UserRepository;
 import com.aditi_final.bridgeskill_api.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,17 +18,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    public AuthService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            AuthenticationManager authenticationManager
+    ) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+    }
 
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -67,6 +75,7 @@ public class AuthService {
 
         return new LoginResponse(
                 token,
+                user.getId(),
                 user.getFullName(),
                 user.getEmail(),
                 user.getRoleId()

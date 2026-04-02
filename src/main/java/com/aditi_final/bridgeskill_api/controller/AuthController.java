@@ -1,27 +1,29 @@
 package com.aditi_final.bridgeskill_api.controller;
 
-import com.aditi_final.bridgeskill_api.dto.auth.*;
+import com.aditi_final.bridgeskill_api.dto.auth.LoginRequest;
+import com.aditi_final.bridgeskill_api.dto.auth.LoginResponse;
+import com.aditi_final.bridgeskill_api.dto.auth.MeResponse;
+import com.aditi_final.bridgeskill_api.dto.auth.RegisterRequest;
+import com.aditi_final.bridgeskill_api.dto.auth.RegisterResponse;
 import com.aditi_final.bridgeskill_api.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-@RestController // @RestController = this class handles REST API requests and returns JSON response
-@RequestMapping("/api/auth")  // @RequestMapping = This sets the base URL for all methods inside this controller.
+@RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired //  @Autowired = Spring injects AuthService into this controller.
-    private AuthService authService;
+    private final AuthService authService;
 
-    // @RequestBody RegisterRequest request = Means Spring takes JSON from frontend request body and converts it into a Java object.
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request)); // authService.register(request) = Controller does not do the business logic itself. It sends the work to AuthService.
-        // .ok(...) = return 200 success with data as body
-        //  ResponseEntity(built-in Spring class) = It helps you return a full HTTP response, including: status code, response body, headers if needed.
-        // <RegisterResponse> = This is the generic type. It means the response body will contain a RegisterResponse object.
+        return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping("/login")
@@ -34,12 +36,4 @@ public class AuthController {
         String email = authentication.getName();
         return ResponseEntity.ok(authService.me(email));
     }
-
 }
-// + Main goal of controller = handle HTTP requests and responses.(It is the layer that talks with the client/frontend.)
-// + What controller usually does?
-// receive request from frontend
-// get data from @RequestBody, @PathVariable, @RequestParam
-// call service
-// return response
-// + Main goal of AuthController = receive auth API requests from frontend, send them to AuthService, and return the result back to frontend
