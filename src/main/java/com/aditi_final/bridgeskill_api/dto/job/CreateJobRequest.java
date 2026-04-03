@@ -27,4 +27,13 @@ public class CreateJobRequest {
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Salary must be zero or greater")
     private BigDecimal salary;
+
+    @Size(max = 30, message = "Job type must not exceed 30 characters")
+    private String jobType;
+
+    @Size(max = 30, message = "Skill level must not exceed 30 characters")
+    private String skillLevel;
+
+    @Size(max = 30, message = "Work mode must not exceed 30 characters")
+    private String workMode;
 }

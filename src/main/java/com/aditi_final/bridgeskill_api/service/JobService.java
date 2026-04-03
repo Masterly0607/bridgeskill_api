@@ -65,6 +65,8 @@ public class JobService {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        validateStudentFriendlyFields(request.getJobType(), request.getSkillLevel(), request.getWorkMode());
+
         Job job = Job.builder()
                 .clientId(currentUser.getId())
                 .title(request.getTitle())
@@ -72,6 +74,9 @@ public class JobService {
                 .category(request.getCategory())
                 .location(request.getLocation())
                 .salary(request.getSalary())
+                .jobType(normalizeUpper(request.getJobType()))
+                .skillLevel(normalizeUpper(request.getSkillLevel()))
+                .workMode(normalizeUpper(request.getWorkMode()))
                 .status("OPEN")
                 .build();
 
@@ -94,11 +99,16 @@ public class JobService {
             throw new IllegalArgumentException("Invalid job status");
         }
 
+        validateStudentFriendlyFields(request.getJobType(), request.getSkillLevel(), request.getWorkMode());
+
         job.setTitle(request.getTitle());
         job.setDescription(request.getDescription());
         job.setCategory(request.getCategory());
         job.setLocation(request.getLocation());
         job.setSalary(request.getSalary());
+        job.setJobType(normalizeUpper(request.getJobType()));
+        job.setSkillLevel(normalizeUpper(request.getSkillLevel()));
+        job.setWorkMode(normalizeUpper(request.getWorkMode()));
         job.setStatus(request.getStatus());
 
         Job updatedJob = jobRepository.save(job);
@@ -128,11 +138,43 @@ public class JobService {
         jobRepository.save(job);
     }
 
+    private void validateStudentFriendlyFields(String jobType, String skillLevel, String workMode) {
+        String normalizedJobType = normalizeUpper(jobType);
+        String normalizedSkillLevel = normalizeUpper(skillLevel);
+        String normalizedWorkMode = normalizeUpper(workMode);
+
+        if (normalizedJobType != null &&
+                !normalizedJobType.equals("PART_TIME") &&
+                !normalizedJobType.equals("WEEKEND") &&
+                !normalizedJobType.equals("SHORT_TERM") &&
+                !normalizedJobType.equals("FREELANCE")) {
+            throw new IllegalArgumentException("Invalid job type");
+        }
+
+        if (normalizedSkillLevel != null &&
+                !normalizedSkillLevel.equals("BEGINNER") &&
+                !normalizedSkillLevel.equals("INTERMEDIATE")) {
+            throw new IllegalArgumentException("Invalid skill level");
+        }
+
+        if (normalizedWorkMode != null &&
+                !normalizedWorkMode.equals("ONSITE") &&
+                !normalizedWorkMode.equals("REMOTE") &&
+                !normalizedWorkMode.equals("HYBRID")) {
+            throw new IllegalArgumentException("Invalid work mode");
+        }
+    }
+
     private String normalize(String value) {
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
         return value.trim();
+    }
+
+    private String normalizeUpper(String value) {
+        String normalized = normalize(value);
+        return normalized == null ? null : normalized.toUpperCase();
     }
 
     private JobResponse mapToResponse(Job job) {
@@ -144,6 +186,9 @@ public class JobService {
                 .category(job.getCategory())
                 .location(job.getLocation())
                 .salary(job.getSalary())
+                .jobType(job.getJobType())
+                .skillLevel(job.getSkillLevel())
+                .workMode(job.getWorkMode())
                 .status(job.getStatus())
                 .createdAt(job.getCreatedAt())
                 .updatedAt(job.getUpdatedAt())

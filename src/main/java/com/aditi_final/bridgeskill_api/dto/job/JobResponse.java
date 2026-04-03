@@ -17,6 +17,9 @@ public class JobResponse {
     private String category;
     private String location;
     private BigDecimal salary;
+    private String jobType;
+    private String skillLevel;
+    private String workMode;
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

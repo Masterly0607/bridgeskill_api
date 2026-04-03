@@ -39,6 +39,15 @@ public class Job {
     @Column(precision = 12, scale = 2)
     private BigDecimal salary;
 
+    @Column(name = "job_type", length = 30)
+    private String jobType;
+
+    @Column(name = "skill_level", length = 30)
+    private String skillLevel;
+
+    @Column(name = "work_mode", length = 30)
+    private String workMode;
+
     @Column(nullable = false, length = 20)
     private String status;
 

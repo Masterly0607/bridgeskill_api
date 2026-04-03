@@ -87,6 +87,7 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return new MeResponse(
+                user.getId(),
                 user.getFullName(),
                 user.getEmail(),
                 user.getRoleId()
