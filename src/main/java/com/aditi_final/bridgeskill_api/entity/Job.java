@@ -2,6 +2,8 @@ package com.aditi_final.bridgeskill_api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,18 +33,29 @@ public class Job {
     @Column(length = 100)
     private String category;
 
-    @Column(length = 100)
+    @Column(length = 150)
     private String location;
 
     @Column(precision = 12, scale = 2)
     private BigDecimal salary;
 
-    @Column(nullable = false, length = 30)
+    @Column(name = "job_type", length = 30)
+    private String jobType;
+
+    @Column(name = "skill_level", length = 30)
+    private String skillLevel;
+
+    @Column(name = "work_mode", length = 30)
+    private String workMode;
+
+    @Column(nullable = false, length = 20)
     private String status;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", insertable = false, updatable = false)
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 }
